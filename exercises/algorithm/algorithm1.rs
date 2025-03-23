@@ -56,11 +56,11 @@ impl<T> LinkedList<T> {
         self.length += 1;
     }
 
-    pub fn get(&mut self, index: i32) -> Option<&T> {
+    pub fn get(&self, index: i32) -> Option<&T> {
         self.get_ith_node(self.start, index)
     }
 
-    fn get_ith_node(&mut self, node: Option<NonNull<Node<T>>>, index: i32) -> Option<&T> {
+    fn get_ith_node(&self, node: Option<NonNull<Node<T>>>, index: i32) -> Option<&T> {
         match node {
             None => None,
             Some(next_ptr) => match index {
@@ -69,14 +69,41 @@ impl<T> LinkedList<T> {
             },
         }
     }
-	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
-	{
-		//TODO
-		Self {
-            length: 0,
-            start: None,
-            end: None,
+
+	pub fn merge(list_a:LinkedList<T>, list_b:LinkedList<T>) -> Self
+    where
+        T: Ord + Clone,
+    {
+        let mut index_a: i32 = 0;
+        let mut index_b: i32 = 0;
+        let mut list_merge = Self::new();
+        while index_a < list_a.length as i32 || index_b < list_b.length as i32 {
+            let value_a = list_a.get(index_a);
+            let value_b = list_b.get(index_b);
+
+            match (value_a, value_b) {
+                (Some(a), Some(b)) => {
+                    if a <= b {
+                        list_merge.add(a.clone());
+                        index_a += 1;
+                    } else {
+                        list_merge.add(b.clone());
+                        index_b += 1;
+                    }
+                }
+                (Some(a), None) => {
+                    list_merge.add(a.clone());
+                    index_a += 1;
+                }
+                (None, Some(b)) => {
+                    list_merge.add(b.clone());
+                    index_b += 1;
+                }
+                (None, None) => break,
+            }
         }
+
+        list_merge
 	}
 }
 
