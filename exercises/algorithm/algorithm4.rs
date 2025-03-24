@@ -41,7 +41,7 @@ where
 
 impl<T> BinarySearchTree<T>
 where
-    T: Ord,
+    T: Ord + Clone,
 {
 
     fn new() -> Self {
@@ -51,22 +51,67 @@ where
     // Insert a value into the BST
     fn insert(&mut self, value: T) {
         //TODO
+        if self.search(value.clone()) {
+            return;
+        }
+
+        if self.root.is_none() {
+            self.root = Some(Box::new(TreeNode::new(value)));
+            return;
+        }
+
+        let mut current = self.root.as_mut();
+        while let Some(current_ptr) = current {
+            if value < current_ptr.value {
+                if current_ptr.left.is_none() {
+                    current_ptr.insert(value);
+                    return;
+                } else {
+                    current = current_ptr.left.as_mut();
+                }
+            } else {
+                if current_ptr.right.is_none() {
+                    current_ptr.insert(value);
+                    return;
+                } else {
+                    current = current_ptr.right.as_mut();
+                }
+            }
+        }
     }
 
     // Search for a value in the BST
-    fn search(&self, value: T) -> bool {
+    fn search(&mut self, value: T) -> bool {
         //TODO
-        true
+        let mut current = self.root.as_mut();
+        while let Some(current_ptr) = current {
+            if value == current_ptr.value {
+                return true;
+            }
+
+            if value < current_ptr.value {
+                current = current_ptr.left.as_mut();
+            } else {
+                current = current_ptr.right.as_mut();
+            }
+        }
+        false
     }
 }
 
 impl<T> TreeNode<T>
 where
-    T: Ord,
+    T: Ord + Clone,
 {
     // Insert a node into the tree
     fn insert(&mut self, value: T) {
         //TODO
+        let new_node = Box::new(Self::new(value.clone()));
+        if value < self.value {
+            self.left = Some(new_node);
+        } else {
+            self.right = Some(new_node);
+        }
     }
 }
 
