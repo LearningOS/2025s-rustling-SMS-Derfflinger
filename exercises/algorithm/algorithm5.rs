@@ -3,7 +3,7 @@
 	This problem requires you to implement a basic BFS algorithm
 */
 
-//I AM NOT DONE
+//I AM DONE
 use std::collections::VecDeque;
 
 // Define a graph
@@ -35,7 +35,10 @@ impl Graph {
         queue.push_back(current);
 
         while visit_order.len() < self.adj.len() {
-            current = queue.pop_front().unwrap();
+            current = match queue.pop_front() {
+                Some(value) => value,
+                None => return visit_order,
+            };
             if !visit_order.contains(&current) {
                 visit_order.push(current);
             }
